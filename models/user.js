@@ -47,12 +47,7 @@ userSchema.statics.isUserExists = function (usernameOrEmail, done) {
 
 userSchema.statics.authenticate = function (usernameOrEmail, password, done) {
   User.findByUsernameOrEmail(usernameOrEmail, function (error, user) {
-    if (user && user.checkPassword(password)) {
-      return done(null, user);
-    }
-    else {
-      return done('error', null);
-    }
+    return (user && user.checkPassword(password)) ? done(null, user) : done('error', null);
   });
 };
 
