@@ -25,12 +25,11 @@ var Users = {
         );
       }
       else {
-        var user = data;
-        user.token = Jwt.sign(data, 'mYsEcReT', {
+        data.token = Jwt.sign(data, 'mYsEcReT', {
           expiresIn: '1m'
         });
         return res.json(
-          ResContent(true, 'Successful authentication', null, user)
+          ResContent(true, 'Successful authentication', null, { a: 1, b: 2 })
         );
       }
     });
