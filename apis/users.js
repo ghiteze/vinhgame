@@ -1,3 +1,4 @@
+var Jwt = require('jsonwebtoken');
 var User = require('../models/user');
 var ErrorMsg = require('../configs/errorMsg');
 var ResContent = require('../lib/resContent');
@@ -24,6 +25,9 @@ var Users = {
         );
       }
       else {
+        data.token = Jwt.sign(data, 'mYsEcReT', {
+          expiresIn: '1m'
+        });
         return res.json(
           ResContent(true, 'Successful authentication', null, data)
         );
