@@ -60,7 +60,14 @@ var usersApi = {
     newUser.encryptPassword(user.password);
 
     newUser.save(function (error) {
+      if (error) {
+        return res.status(500).json({
 
+        });
+      }
+      else {
+        return res.json({ success: true })
+      }
     });
 
     // var user = req.body;
