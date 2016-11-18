@@ -41,34 +41,56 @@ var usersApi = {
 
 
   register: function (req, res) {
-    var user = req.body;
+    var user = req.body.user;
 
-    req.assert('username', errorMsg.user.username.required).notEmpty();
-    req.assert('email', errorMsg.user.email.required).notEmpty();
-    req.assert('email', errorMsg.user.email.invalid).isEmail();
-    req.assert('password', errorMsg.user.password.required).notEmpty();
-    req.assert('password', errorMsg.user.password.length).isLength({ min: 6, max: 255 });
-    req.assert('password', errorMsg.user.password.confirm).equals(user.passwordConfirm);
+    req.assert('user.username', errorMsg.user.username.required).notEmpty();
+    req.assert('user.email', errorMsg.user.email.required).notEmpty();
+    req.assert('user.email', errorMsg.user.email.invalid).isEmail();
+    req.assert('user.password', errorMsg.user.password.required).notEmpty();
+    req.assert('user.password', errorMsg.user.password.length).isLength({ min: 6, max: 255 });
+    req.assert('user.password', errorMsg.user.password.confirm).equals(user.passwordConfirm);
 
     var errors = req.validationErrors();
     if (errors) {
-      return res.status(500).json(
-        resContent(false, 'Validation failed', errors, null)
-      );
+      return res.status(500).json({ success: false, errors: errors });
     }
 
     var newUser = new User(user);
+
     newUser.encryptPassword(user.password);
+
     newUser.save(function (error) {
-      if (error) {
-        return res.status(500).json(
-          resContent(false, 'Create user failed', error, null)
-        );
-      }
-      return res.json(
-        resContent(true, 'User created successfully', null, null)
-      );
+
     });
+
+    // var user = req.body;
+
+    // req.assert('username', errorMsg.user.username.required).notEmpty();
+    // req.assert('email', errorMsg.user.email.required).notEmpty();
+    // req.assert('email', errorMsg.user.email.invalid).isEmail();
+    // req.assert('password', errorMsg.user.password.required).notEmpty();
+    // req.assert('password', errorMsg.user.password.length).isLength({ min: 6, max: 255 });
+    // req.assert('password', errorMsg.user.password.confirm).equals(user.passwordConfirm);
+
+    // var errors = req.validationErrors();
+    // if (errors) {
+    //   return res.status(500).json(
+    //     resContent(false, 'Validation failed', errors, null)
+    //   );
+    // }
+
+    // var newUser = new User(user);
+    // newUser.encryptPassword(user.password);
+    // newUser.save(function (error) {
+    //   if (error) {
+    //     return res.status(500).json(
+    //       resContent(false, 'Create user failed', error, null)
+    //     );
+    //   }
+    //   return res.json(
+    //     resContent(true, 'User created successfully', null, null)
+    //   );
+    // });
   },
 
   hihi: function (req, res) {

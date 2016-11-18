@@ -44,11 +44,11 @@ app.use(validator());
 // Set static dir
 app.use(express.static(__dirname + '/assets'));
 
-// Decrypt request
-app.use(decryptData);
+// // Decrypt request
+// app.use(decryptData);
 
-// Encrypt response
-app.use(encryptData);
+// // Encrypt response
+// app.use(encryptData);
 
 // Allow origin
 app.use(allowOrigin);
