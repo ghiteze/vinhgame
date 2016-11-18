@@ -1,11 +1,10 @@
-var CryptoJS = require('../lib/aes');
+var cryptoJS = require('../lib/aes');
 
-var DecryptData = function (req, res, next) {
-
-  var decrypted  = CryptoJS.AES.decrypt(req.body.data, req.body.timeStamp);
-  var dataString = decrypted.toString(CryptoJS.enc.Utf8);
+var decryptData = function (req, res, next) {
+  var decrypted  = cryptoJS.AES.decrypt(req.body.data, req.body.timeStamp);
+  var dataString = decrypted.toString(cryptoJS.enc.Utf8);
   req.body = JSON.parse(dataString);
   next();
 };
 
-module.exports = DecryptData;
+module.exports = decryptData;

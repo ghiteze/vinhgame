@@ -1,27 +1,27 @@
-var Jwt = require('jsonwebtoken');
+var jwt = require('jsonwebtoken');
+var errorMsg = require('../configs/errorMsg');
+var resContent = require('../lib/resContent');
 var User = require('../models/user');
-var ErrorMsg = require('../configs/errorMsg');
-var ResContent = require('../lib/resContent');
 
-var Users = {
+var usersApi = {
   authenticate: function (req, res) {
     var user = req.body;
 
-    req.assert('usernameOrEmail', ErrorMsg.user.usernameOrEmail.required).notEmpty();
-    req.assert('password', ErrorMsg.user.password.required).notEmpty();
-    req.assert('password', ErrorMsg.user.password.length).isLength({ min: 6, max: 255 });
+    req.assert('usernameOrEmail', errorMsg.user.usernameOrEmail.required).notEmpty();
+    req.assert('password', errorMsg.user.password.required).notEmpty();
+    req.assert('password', errorMsg.user.password.length).isLength({ min: 6, max: 255 });
 
     var errors = req.validationErrors();
     if (errors) {
       return res.status(500).json(
-        ResContent(false, 'Validation failed', errors, null)
+        resContent(false, 'Validation failed', errors, null)
       );
     }
 
     User.authenticate(user.usernameOrEmail, user.password, function (error, data) {
       if (error) {
         return res.status(500).json(
-          ResContent(false, 'Authentication failed', [{ msg: 'Username or password is incorrect' }], null)
+          resContent(false, 'Authentication failed', [{ msg: 'Username or password is incorrect' }], null)
         );
       }
       else {
@@ -29,11 +29,11 @@ var Users = {
         newData.username = data.username;
         newData.email = data.email;
         newData.avatar = data.avatar;
-        newData.token = Jwt.sign(data, 'mYsEcReT', {
+        newData.token = jwt.sign(data, 'mYsEcReT', {
           expiresIn: '1m'
         });
         return res.json(
-          ResContent(true, 'Successful authentication', null, newData)
+          resContent(true, 'Successful authentication', null, newData)
         );
       }
     });
@@ -43,17 +43,17 @@ var Users = {
   register: function (req, res) {
     var user = req.body;
 
-    req.assert('username', ErrorMsg.user.username.required).notEmpty();
-    req.assert('email', ErrorMsg.user.email.required).notEmpty();
-    req.assert('email', ErrorMsg.user.email.invalid).isEmail();
-    req.assert('password', ErrorMsg.user.password.required).notEmpty();
-    req.assert('password', ErrorMsg.user.password.length).isLength({ min: 6, max: 255 });
-    req.assert('password', ErrorMsg.user.password.confirm).equals(user.passwordConfirm);
+    req.assert('username', errorMsg.user.username.required).notEmpty();
+    req.assert('email', errorMsg.user.email.required).notEmpty();
+    req.assert('email', errorMsg.user.email.invalid).isEmail();
+    req.assert('password', errorMsg.user.password.required).notEmpty();
+    req.assert('password', errorMsg.user.password.length).isLength({ min: 6, max: 255 });
+    req.assert('password', errorMsg.user.password.confirm).equals(user.passwordConfirm);
 
     var errors = req.validationErrors();
     if (errors) {
       return res.status(500).json(
-        ResContent(false, 'Validation failed', errors, null)
+        resContent(false, 'Validation failed', errors, null)
       );
     }
 
@@ -62,11 +62,11 @@ var Users = {
     newUser.save(function (error) {
       if (error) {
         return res.status(500).json(
-          ResContent(false, 'Create user failed', error, null)
+          resContent(false, 'Create user failed', error, null)
         );
       }
       return res.json(
-        ResContent(true, 'User created successfully', null, null)
+        resContent(true, 'User created successfully', null, null)
       );
     });
   },
@@ -76,4 +76,4 @@ var Users = {
   }
 };
 
-module.exports = Users;
+module.exports = usersApi;

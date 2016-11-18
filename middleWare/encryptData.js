@@ -1,6 +1,6 @@
-var EncryptData = function (req, res, next) {
+var encryptData = function (req, res, next) {
   // code here
   next();
 };
 
-module.exports = EncryptData;
+module.exports = encryptData;

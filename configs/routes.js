@@ -1,9 +1,9 @@
-var Users = require('../apis/users');
+var users = require('../apis/users');
 
-var Routes = function (app) {
-  app.post('/authenticate', Users.authenticate);
-  app.post('/register', Users.register);
-  app.get('/hihi', Users.hihi)
+var routes = function (app) {
+  app.post('/authenticate', users.authenticate);
+  app.post('/register', users.register);
+  app.get('/hihi', users.hihi)
 };
 
-module.exports.draw = Routes;
+module.exports.draw = routes;

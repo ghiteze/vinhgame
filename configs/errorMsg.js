@@ -1,4 +1,4 @@
-var Errors = {
+var errors = {
   user: {
     username: {
       required: 'Username is required'
@@ -19,4 +19,4 @@ var Errors = {
   }
 }
 
-module.exports = Errors;
+module.exports = errors;

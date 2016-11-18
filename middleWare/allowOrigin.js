@@ -1,4 +1,4 @@
-var AllowOrigin = function (req, res, next) {
+var allowOrigin = function (req, res, next) {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
   res.setHeader('Access-Control-Allow-Headers', 'X-Requested-With,content-type');
@@ -6,4 +6,4 @@ var AllowOrigin = function (req, res, next) {
   next();
 };
 
-module.exports = AllowOrigin;
+module.exports = allowOrigin;

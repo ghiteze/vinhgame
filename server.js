@@ -4,7 +4,6 @@ var
   bodyParser  = require('body-parser'),
   validator   = require('express-validator'),
   session     = require('express-session'),
-  jwt         = require('jsonwebtoken'),
   mongoose    = require('mongoose');
 
 // Require custom middlewares
