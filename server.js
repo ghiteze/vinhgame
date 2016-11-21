@@ -57,6 +57,7 @@ app.use(allowOrigin);
 routes.draw(app);
 
 // Connect to mongodb
+mongoose.Promise = global.Promise;
 mongoose.connect(db.mongo.uri);
 
 
