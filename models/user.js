@@ -30,11 +30,11 @@ userSchema.methods.encryptPassword = function (password, done) {
   var user = this;
   bcrypt.genSalt(8, function (error, salt) {
     if (error) {
-      return done(error);
+      return done('error');
     }
     bcrypt.hash(password, salt, function (error, hash) {
       if (error) {
-        return done(error);
+        return done('error');
       }
       user.password = hash;
       done();
@@ -46,7 +46,7 @@ userSchema.methods.encryptPassword = function (password, done) {
 userSchema.methods.checkPassword = function (password, done) {
   bcrypt.compare(password, this.password, function (error, isMatch) {
     if (error) {
-      return done(error);
+      return done('error');
     }
     done(null, isMatch);
   })
@@ -62,12 +62,12 @@ userSchema.statics.authenticate = function (credentials, done) {
   };
   User.findOne(query, '_id password', function (error, user) {
     if (error) {
-      return done(error);
+      return done('error');
     }
     if (user) {
       user.checkPassword(credentials.password, function (error, success) {
         if (error) {
-          return done(error);
+          return done('error');
         }
         done(null, user, success);
       });
@@ -88,22 +88,22 @@ userSchema.statics.isUserExists = function (credentials, done) {
   };
   User.findOne(query, 'userName email', function (error, user) {
     if (error) {
-      return done(error);
+      return done('error');
     }
     done(null, user);
   });
   return;
 };
 
-userSchema.methods.createUser = function (password, done) {
+userSchema.methods.createUser = function (done) {
   var user = this;
-  user.encryptPassword(password, function (error) {
+  user.encryptPassword(user.password, function (error) {
     if (error) {
-      return done(error);
+      return done('error');
     }
     user.save(function (error) {
       if (error) {
-        return done(error);
+        return done('error');
       }
       done();
     });
@@ -122,11 +122,11 @@ userSchema.methods.genToken = function (done) {
     var token   = jwt.sign(payload, secret, expire);
 
     if (error) {
-      return done(error);
+      return done('error');
     }
     client.set(userId, token, function (error, reply) {
       if (error) {
-        return done(error);
+        return done('error');
       }
       done(null, token);
     });
@@ -136,44 +136,41 @@ userSchema.methods.genToken = function (done) {
 
 userSchema.statics.verifyToken = function (token, done) {
   // debug
-  // client.keys('*', function (error, key) {
-  //   for (var i = 0 ; i < key.length; i++) {
-  //     console.log(key[i]);
-  //     client.get(key[i], function (error, reply) {
-  //       console.log(reply);
-  //       console.log('\n');
-  //     })
-  //   }
-  // });
+  client.keys('*', function (error, key) {
+    for (var i = 0 ; i < key.length; i++) {
+      console.log(key[i]);
+      client.get(key[i], function (error, reply) {
+        console.log(reply);
+        console.log('\n');
+      })
+    }
+  });
 
-  if (token) {
-    var payload = jwt.decode(token);
-    if (payload && payload.id) {
-      var userId = payload.id;
-      client.get(userId, function (error, reply) {
-        if (error) {
-          return done('Failed to authenticate token');
-        }
-        if (reply == token) {
-          jwt.verify(token, 'mYsEcReT', function (error, decoded) {
-            if (error && error.name == 'TokenExpiredError' && error.message == 'jwt expired') {
-              client.del(userId);
-              return done('Failed to authenticate token');
-            }
-            done(null, decoded);
-          })
-        }
-        else {
-          return done('Failed  to authenticate token.');
-        }
-      });
-    }
-    else {
-      return done('Failed  to authenticate token.');
-    }
+  var payload = jwt.decode(token);
+
+  if (payload && payload.id) {
+    var userId = payload.id;
+
+    client.get(userId, function (error, reply) {
+      if (error) {
+        return done('error');
+      }
+      if (reply == token) {
+        jwt.verify(token, 'mYsEcReT', function (error, decoded) {
+          if (error && error.name == 'TokenExpiredError' && error.message == 'jwt expired') {
+            client.del(userId);
+            return done('error');
+          }
+          done(null, decoded);
+        })
+      }
+      else {
+        return done('error');
+      }
+    });
   }
   else {
-    return done('No token provided.');
+    return done('error');
   }
 };
 

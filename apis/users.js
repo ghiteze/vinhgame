@@ -10,20 +10,10 @@ var usersApi = {
     req.assert('user.password', errorMsg.user.password.required).notEmpty();
     req.assert('user.password', errorMsg.user.password.length).len(6);
 
-    var errors = req.validationErrors();
-    if (errors) {
-      var messages = [];
-      for (var i in errors) {
-        messages.push(errors[i].msg);
-      }
-      return res.status(500).json({ success: false, messages: messages });
-    }
-
     User.authenticate(credentials, function (error, user, success) {
       if (error) {
         return res.status(500).json({ success: false, messages: ['Authentication failed.'] });
       }
-
       if (user) {
         if (success) {
           user.genToken(function (error, token) {
@@ -54,15 +44,6 @@ var usersApi = {
     req.assert('user.password', errorMsg.user.password.length).len(6);
     req.assert('user.password', errorMsg.user.password.confirm).equals(credentials.passwordConfirm);
 
-    var errors = req.validationErrors();
-    if (errors) {
-      var messages = [];
-      for (var i in errors) {
-        messages.push(errors[i].msg);
-      }
-      return res.status(500).json({ success: false, messages: messages });
-    }
-
     User.isUserExists(credentials, function (error, isUser) {
       if (error) {
         return res.status(500).json({ success: false, messages: ['Registration failed.'] });
@@ -72,7 +53,7 @@ var usersApi = {
       }
       else {
         var user = new User(credentials);
-        user.createUser(credentials.password, function (error) {
+        user.createUser(function (error) {
           if (error) {
             return res.status(500).json({ success: false, messages: ['Registration failed.'] });
           }
@@ -84,12 +65,17 @@ var usersApi = {
 
   hihi: function (req, res) {
     var token = req.body.token || req.query.token || req.headers['x-access-token'];
-    User.verifyToken(token, function (error, decoded) {
-      if (error) {
-        return res.status(500).json({ success: false, messages: [error] });
-      }
-      return res.json({ success: true, messages: ['Successful verify token.'], decoded: decoded });
-    });
+    if (token) {
+      User.verifyToken(token, function (error, decoded) {
+        if (error) {
+          return res.status(500).json({ success: false, messages: ['Failed  to authenticate token.'] });
+        }
+        return res.json({ success: true, messages: ['Successful verify token.'], decoded: decoded });
+      });
+    }
+    else {
+      return res.status(500).json({ success: false, messages: ['No token provided.'] });
+    }
   }
 };
 
