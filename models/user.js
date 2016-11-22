@@ -135,17 +135,6 @@ userSchema.methods.genToken = function (done) {
 };
 
 userSchema.statics.verifyToken = function (token, done) {
-  // debug
-  client.keys('*', function (error, key) {
-    for (var i = 0 ; i < key.length; i++) {
-      console.log(key[i]);
-      client.get(key[i], function (error, reply) {
-        console.log(reply);
-        console.log('\n');
-      })
-    }
-  });
-
   var payload = jwt.decode(token);
 
   if (payload && payload.id) {
@@ -173,6 +162,7 @@ userSchema.statics.verifyToken = function (token, done) {
     return done('error');
   }
 };
+
 
 var User = mongoose.model('User', userSchema);
 

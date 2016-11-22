@@ -40,17 +40,6 @@ app.use(session({
 
 // Request validation
 app.use(validator());
-app.use(function (req, res, next) {
-  var errors = req.validationErrors();
-  if (errors) {
-    var messages = [];
-    for (var i in errors) {
-      messages.push(errors[i].msg);
-    }
-    return res.status(500).json({ success: false, messages: messages });
-  }
-  next();
-})
 
 // Set static dir
 app.use(express.static(__dirname + '/assets'));
