@@ -14,9 +14,8 @@ var
 
 // Require configs
 var
-  db            = require('./configs/db'),
-  routes        = require('./configs/routes'),
-  sessionConfig = require('./configs/session');
+  config = require('./config/config'),
+  routes = require('./config/routes');
 
 
 // Server configuration
@@ -30,11 +29,11 @@ app.use(bodyParser.json());
 
 // Session config
 app.use(session({
-  secret: sessionConfig.secret,
+  secret: config.SESSION.SECRET,
   resave: false,
   saveUninitialized: true,
   cookie: {
-    maxAge: sessionConfig.maxAge
+    maxAge: config.SESSION.MAX_AGE
   }
 }));
 
@@ -58,10 +57,10 @@ routes.draw(app);
 
 // Connect to mongodb
 mongoose.Promise = global.Promise;
-mongoose.connect(db.mongo.uri);
+mongoose.connect(config.DB_URI);
 
 
-app.listen(process.env.PORT || 3000);
+app.listen(config.PORT);
 
 
 // mongoose.connect('mongodb://admin:123456@127.0.0.1:27017/admin');
